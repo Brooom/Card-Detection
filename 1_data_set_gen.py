@@ -1,5 +1,5 @@
 #%%
-from img_rando import *
+from library.img_rando import *
 import time
 
 #%%
@@ -12,10 +12,10 @@ csv_name = '1_all_images/all_labels'
 
 #set number of differnt inerations (min 1)
 master_data_size = 2
-zoom_data_size= 1
-rot_data_size = 1
-POV_data_size = 1
-pos_data_size = 1
+zoom_data_size= master_data_size
+rot_data_size = master_data_size
+POV_data_size = master_data_size
+pos_data_size = master_data_size
 
 #%%
 # load csv, images and background + create masks
@@ -69,7 +69,9 @@ for img, mask, index in zip(images,masks,range(1,images.shape[0]+1)):
     #debug if index == 2: 
         #debug break 
     print("img_" ,index)
+
     for i_zoom in range(zoom_data_size):
+        print(type(img.sum()+i_zoom))
         img_zoom = img_zoom_rand(img,img.sum()+i_zoom)
         mask_zoom = img_zoom_rand(mask,img.sum()+i_zoom)
         print(1)
