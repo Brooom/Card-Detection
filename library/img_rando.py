@@ -185,14 +185,16 @@ def img_pos_rand(img,dst,mask=None,seed=None):
         random.seed(fix_seed)
         #debug print("fix seed")
     elif seed != None:
-        random.seed(seed)
+        random.seed(int(seed))
         #debug print("seed")
     
     _dst = np.copy(dst)
     
     if mask is None:
-        mask = img
-
+        ret, mask = cv2.threshold(img, 0, 255, 0)
+    ret, mask = cv2.threshold(img, 0, 255, 0)
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.erode(mask, kernel, iterations=1) 
     y, x= img.shape
     dst_y, dst_x= dst.shape
 
