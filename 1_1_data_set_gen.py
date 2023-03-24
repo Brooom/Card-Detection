@@ -65,12 +65,29 @@ for img, index in zip(images,range(1,images.shape[0]+1)):
                         img_pos,pos = img_pos_rand(img_pov,back)
                         for kernel_size in [1,3,5]:
                             final_img=img_blure(img_pos,kernel_size)
+
+
+                            contours, hierarchy=cv2.findContours(img_pov, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE            )
+                            img_pov_color=cv2.cvtColor(img_pov, cv2.COLOR_GRAY2BGR)
+                            #cv2.drawContours(img_pov_color, contours, -1, (0,255,0), 3)
+                            #cv2.imshow('img',img_pov_color)
+                            #cv2.waitKey(0)
+                            rect=cv2.boundingRect(contours[0])
+                            #cv2.rectangle(img_pov_color,(rect[0],rect[1]),(rect[0]+rect[2],rect[1]+rect[3]),(0,255,0),2)
+                            #cv2.imshow('img',img_pov_color)
+                            #cv2.waitKey(0)
+
                             #save image
                             print(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png")
                             cv2.imwrite(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",final_img)
                             labels=np.append(labels,[('img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",
-                                                            img_pos.shape[0],img_pos.shape[1],index,pos[0],pos[1],pos[0]+img_pos.shape[1],pos[1]+img_pos.shape[0])],0)
+                                                            final_img.shape[1],final_img.shape[0],index,pos[0]+rect[0],pos[1]+rect[1],rect[0]+rect[2]+pos[0],rect[1]+rect[3]+pos[1])],0)
 
+
+                            final_img_color=cv2.cvtColor(final_img, cv2.COLOR_GRAY2BGR)
+                            #cv2.rectangle(final_img_color,(pos[0]+rect[0],pos[1]+rect[1]),(rect[0]+rect[2]+pos[0],rect[1]+rect[3]+pos[1]),(0,255,0),2)
+                            #cv2.imshow('img',final_img_color)
+                            #cv2.waitKey(0)
                             count = count +1
 end = time.time()
 print("Time: "+ str(end - start))

@@ -192,7 +192,6 @@ def img_pos_rand(img,dst,mask=None,seed=None):
     
     if mask is None:
         ret, mask = cv2.threshold(img, 0, 255, 0)
-    ret, mask = cv2.threshold(img, 0, 255, 0)
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.erode(mask, kernel, iterations=1) 
     y, x= img.shape
