@@ -36,7 +36,7 @@ print("Num img going to bo gererated in total: ",back_images.shape[0]*zoom_data_
 
 
 
-labels = np.array([('filename','with','height','class','xmin','ymin','xmax','ymax')])
+labels = np.array([('filename','width','height','class','xmin','ymin','xmax','ymax')])
 count = 0
 
 #%%
@@ -63,14 +63,15 @@ for img, index in zip(images,range(1,images.shape[0]+1)):
                 for back in back_images:
                     for i_pos in range(pos_data_size):
                         img_pos,pos = img_pos_rand(img_pov,back)
-                        
-                        #save image
-                        print(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png")
-                        cv2.imwrite(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",img_pos)
-                        labels=np.append(labels,[('img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",
-                                                        img_pos.shape[0],img_pos.shape[1],index,pos[0],pos[1],pos[0]+img_pos.shape[1],pos[1]+img_pos.shape[0])],0)
+                        for kernel_size in [1,3,5]:
+                            final_img=img_blure(img_pos,kernel_size)
+                            #save image
+                            print(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png")
+                            cv2.imwrite(path_all_images+'img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",final_img)
+                            labels=np.append(labels,[('img_'+str(index).rjust(2,"0")+"_"+str(count).rjust(6,"0")+".png",
+                                                            img_pos.shape[0],img_pos.shape[1],index,pos[0],pos[1],pos[0]+img_pos.shape[1],pos[1]+img_pos.shape[0])],0)
 
-                        count = count +1
+                            count = count +1
 end = time.time()
 print("Time: "+ str(end - start))
 

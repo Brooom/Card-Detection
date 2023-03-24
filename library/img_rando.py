@@ -246,6 +246,25 @@ def img_kill (img,delay = 5000 ):
     cv2.waitKey(delay)
     cv2.destroyAllWindows()
 
+
+def img_blure(img, kernel_size=3):
+    """blures a image
+
+    Parameters
+    ----------
+    img : np.array
+        a image
+    delay : int, optional
+        How big the kernel is, by default 3
+    """
+    # Creating the kernel(2d convolution matrix)
+    kernel1 = np.ones((kernel_size, kernel_size), np.float32)*1/(kernel_size*kernel_size)
+    
+    # Applying the filter2D() function
+    blured_img = cv2.filter2D(src=img, ddepth=-1, kernel=kernel1)
+    return blured_img
+
+
 # testcode for funktios
 if __name__ == "__main__":
     seed = (1,2)

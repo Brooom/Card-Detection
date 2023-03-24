@@ -1,5 +1,3 @@
--intcast für seeds
--gitignore für bilder
 -Adjust programm so that also distorted images are generated
 -Create file, that creates all training images with the right labels.
 -create a file, that makes a train test split
