@@ -18,8 +18,8 @@ POV_data_size = master_data_size
 pos_data_size = master_data_size
 
 # import images and cvs
-path_cards = '1_cards_images'
-path_background = '1_background_images'
+path_cards = '0_cards_images'
+path_background = '0_background_images'
 
 #creates a list of all the card images
 images = [cv2.imread(file,0) for file in glob.glob(path_cards+"/*.png")] 
