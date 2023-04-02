@@ -22,17 +22,29 @@ path_cards = '0_cards_images'
 path_background = '0_background_images'
 
 #creates a list of all the card images
-images = [cv2.imread(file,0) for file in glob.glob(path_cards+"/*.png")] 
-images = np.array(images)
-images[images==0]=1 #Image is  not allowed to have any 0 vales at the beginning
 
-back_images = [cv2.imread(file,0) for file in glob.glob(path_background+"/*.jpg")] #[7:]
-back_images = np.array(back_images)
+images = [cv2.imread(file) for file in glob.glob(path_cards+"/*.png")] 
+images = np.array(images)
+images[images[:,:,:,:]==0]=1 #Image is  not allowed to have any 0 vales at the beginning
+
+back_images = np.empty((len(glob.glob(path_background+"/*.jpg")),1000,1500,3)) 
+i=0
+for file in glob.glob(path_background+"/*.jpg"):
+    back_img = cv2.imread(file)
+    print(back_img.shape)
+    if back_img.shape != (1000,1500,3):
+        back_img = cv2.resize(back_img, (1500, 1000))
+    back_images[i,:,:,:]=back_img
+    i+=1
+
+
+#%%
+
 
 #Output some info
 print("Backgrounds: ",back_images.shape)
-print("Num img going to bo gererated per card: ",back_images.shape[0]*zoom_data_size* rot_data_size* POV_data_size*pos_data_size )
-print("Num img going to bo gererated in total: ",back_images.shape[0]*zoom_data_size* rot_data_size* POV_data_size*pos_data_size*images.shape[0])
+print("Num img going to bo gererated per card: ",back_images.shape[0]*zoom_data_size* rot_data_size* POV_data_size*pos_data_size*3)
+print("Num img going to bo gererated in total: ",back_images.shape[0]*zoom_data_size* rot_data_size* POV_data_size*pos_data_size*3*images.shape[0])
 
 
 
@@ -62,13 +74,15 @@ for img, index in zip(images,range(1,images.shape[0]+1)):
                 print(3)
                 for back in back_images:
                     for i_pos in range(pos_data_size):
+                        print(back.shape)
                         img_pos,pos = img_pos_rand(img_pov,back)
                         for kernel_size in [1,3,5]:
                             final_img=img_blure(img_pos,kernel_size)
 
-
-                            contours, hierarchy=cv2.findContours(img_pov, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE            )
-                            img_pov_color=cv2.cvtColor(img_pov, cv2.COLOR_GRAY2BGR)
+                            img_pov_color=img_pov.copy()
+                            img_pov_gray=cv2.cvtColor(img_pov, cv2.COLOR_BGR2GRAY)
+                            contours, hierarchy=cv2.findContours(img_pov_gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE            )
+                            
                             #cv2.drawContours(img_pov_color, contours, -1, (0,255,0), 3)
                             #cv2.imshow('img',img_pov_color)
                             #cv2.waitKey(0)
@@ -84,7 +98,7 @@ for img, index in zip(images,range(1,images.shape[0]+1)):
                                                             final_img.shape[1],final_img.shape[0],index,pos[0]+rect[0],pos[1]+rect[1],rect[0]+rect[2]+pos[0],rect[1]+rect[3]+pos[1])],0)
 
 
-                            final_img_color=cv2.cvtColor(final_img, cv2.COLOR_GRAY2BGR)
+                            #final_img_color=cv2.cvtColor(final_img, cv2.COLOR_GRAY2BGR)
                             #cv2.rectangle(final_img_color,(pos[0]+rect[0],pos[1]+rect[1]),(rect[0]+rect[2]+pos[0],rect[1]+rect[3]+pos[1]),(0,255,0),2)
                             #cv2.imshow('img',final_img_color)
                             #cv2.waitKey(0)

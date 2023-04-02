@@ -86,7 +86,7 @@ def img_rot_rand(img,seed=None):
         random.seed(seed)
         #debug print("seed")
 
-    y, x= img.shape
+    y, x, c= img.shape
     max = math.sqrt(x**2+y**2)
     cX, cY , cmax=  x/2, y/2, max/2
 
@@ -132,7 +132,7 @@ def img_3D_rand(img,seed=None):
         random.seed(seed)
         ##print("seed")
 
-    y, x= img.shape
+    y, x, c= img.shape
 
     sc = 4
     rand_x = random.sample(range(int(x/sc)),4)
@@ -194,8 +194,8 @@ def img_pos_rand(img,dst,mask=None,seed=None):
         ret, mask = cv2.threshold(img, 0, 255, 0)
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.erode(mask, kernel, iterations=1) 
-    y, x= img.shape
-    dst_y, dst_x= dst.shape
+    y, x, c= img.shape
+    dst_y, dst_x, dst_c= dst.shape
 
     rand_x = random.randint(0,dst_x-x)
     rand_y = random.randint(0,dst_y-y)

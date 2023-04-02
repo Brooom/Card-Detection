@@ -1,2 +1,8 @@
 1_all_images/*.png
 1_all_images/*.txt
+library/venv-cardDetection/*
+2_splited_data/*
+2_splited_data/*
+yolov8n.pt
+yolov8x.pt
+runs

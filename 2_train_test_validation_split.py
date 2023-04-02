@@ -1,7 +1,9 @@
+#%%
 import os
 import fnmatch
 import shutil
 import random 
+#%%
 
 all_images = '1_all_images/'
 path_train = '2_splited_data/train/'
@@ -29,17 +31,19 @@ for root, dir, files in os.walk(all_images):
     for items in fnmatch.filter(files, "*"):
         if items[-3:len(items)] in image_datatypes:
             random_number = random.random()
+            print(path_train+items)
+            print(path_train+items[0:-4]+".txt")
             if random_number > 0 and random_number < 0.6:
-                shutil.copy(all_images+items, path_train+items)
-                shutil.copy(all_images+items+".txt", path_train+items+".txt")
+                shutil.move(all_images+items, path_train+items)
+                shutil.move(all_images+items[0:-4]+".txt", path_train+items[0:-4]+".txt")
                 nr_train+=1
             elif random_number > 0.6 and random_number < 0.8:
-                shutil.copy(all_images+items, path_test+items)
-                shutil.copy(all_images+items+".txt", path_test+items+".txt")
+                shutil.move(all_images+items, path_test+items)
+                shutil.move(all_images+items[0:-4]+".txt", path_test+items+".txt")
                 nr_test+=1
             elif random_number > 0.8 and random_number < 1:
-                shutil.copy(all_images+items, path_validation+items)
-                shutil.copy(all_images+items+".txt", path_validation+items+".txt")
+                shutil.move(all_images+items, path_validation+items)
+                shutil.move(all_images+items[0:-4]+".txt", path_validation+items[0:-4]+".txt")
                 nr_validation+=1
             
 print("Nr of train images: ", nr_train)
