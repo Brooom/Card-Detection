@@ -1,4 +1,2 @@
--create a file, that makes a train test split
--include all background and cards
--create a file for model training and validation
+-generate images with more than one card in it
 -create a file for predictions
