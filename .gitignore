@@ -2,6 +2,7 @@
 1_all_images/*.txt
 library/venv-cardDetection/*
 library/venv-cardDetection_cuda/*
+library/venv-cardPredection/*
 2_splited_data/*
 2_splited_data/*
 yolov8n.pt

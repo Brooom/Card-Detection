@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import torch
 from GPUtil import showUtilization as gpu_usage
 from numba import cuda
+import cv2
 
 def free_gpu_cache():
     print("Initial GPU Usage")
@@ -17,6 +18,7 @@ def free_gpu_cache():
     print("GPU Usage after emptying the cache")
     gpu_usage()
 
+#%%
 if __name__ == '__main__':
     #torch.cuda.empty_cache()
     free_gpu_cache() 
@@ -24,7 +26,7 @@ if __name__ == '__main__':
     model = YOLO('yolov8n.pt')  # load a pretrained model (recommended for training)
 
     # Train the model
-    model.train(data="2_splited_data\dataset.yaml", epochs=20, batch=16, imgsz=640, pretrained=True, single_cls=False, patience=5,dropout=0.1, verbose=True, device=0)
+    model.train(data="2_splited_data\dataset.yaml", epochs=40, batch=16, imgsz=640, pretrained=True, single_cls=False, patience=5,dropout=0.1, verbose=True, device=0, save_period=2)
 
 
     #%%
@@ -36,9 +38,7 @@ if __name__ == '__main__':
     metrics.box.map75  # map75
     metrics.box.maps   # a list contains map50-95 of each category
     # %%
-    #model.export(format='onnx')
-    #model.export(keras = True)
-    #model.export(format = 'torchscript')
-    #print(model.names)
-
-    # %%
+    model.export(format='onnx')
+    model.export(keras = True)
+    model.export(format = 'torchscript')
+    print(model.names)

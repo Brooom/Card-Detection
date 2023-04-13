@@ -1,2 +1,1 @@
--generate images with more than one card in it
--create a file for predictions
+-create training images, that are more zoomed in

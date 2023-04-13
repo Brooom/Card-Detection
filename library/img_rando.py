@@ -26,7 +26,7 @@ def def_fix_seed(_seed=None):
     fix_seed = _seed
     return fix_seed
 
-def img_zoom_rand(img,seed=None):
+def img_zoom_rand(img,seed=None, minZoom=1/4, maxZoom=1):
     """
     zooms a image randomly and recenters it,
      The scale fator will be in the range of 0.25 to 1
@@ -53,8 +53,8 @@ def img_zoom_rand(img,seed=None):
         random.seed(seed)
         #debug print(3)
     
-    sc = random.uniform(1/4,1)
-
+    sc = random.uniform(minZoom, maxZoom)
+    print("Zoomfactor: "+ str(sc))
     #debug cv2.imshow("debug_zoom",cv2.resize(img, (0, 0), fx=sc, fy=sc))
     return cv2.resize(img, (0, 0), fx=sc, fy=sc)
 
@@ -191,21 +191,63 @@ def img_pos_rand(img,dst,mask=None,seed=None):
     _dst = np.copy(dst)
     
     if mask is None:
-        ret, mask = cv2.threshold(img, 0, 255, 0)
-    kernel = np.ones((5, 5), np.uint8)
-    mask = cv2.erode(mask, kernel, iterations=1) 
+        #Create mask
+        ret, mask = cv2.threshold(img, 0, 255, 0, cv2.THRESH_BINARY)
+        kernel = np.ones((5, 5), np.uint8)
+        mask = cv2.erode(mask, kernel, iterations=1) 
+    
+
+    #Generate random pos
     y, x, c= img.shape
     dst_y, dst_x, dst_c= dst.shape
-
     rand_x = random.randint(0,dst_x-x)
     rand_y = random.randint(0,dst_y-y)
 
-    #debug print(img.shape,dst.shape,dst[rand_y:rand_y+y,rand_x:rand_x+x].shape,rand_x,rand_y)
-    np.copyto(_dst[rand_y:rand_y+y,rand_x:rand_x+x],img,casting="unsafe",where=mask> 100)
+    #Define how transparent the card should be
+    transparency=random.uniform(0,0.4)
+
+    #Generate a big mask where the small mask is placed at the random position
+    alpha=np.zeros_like(_dst, dtype='uint8')
+    np.copyto(alpha[rand_y:rand_y+y,rand_x:rand_x+x],mask,casting="unsafe")
+
+            #np.copyto(_dst[rand_y:rand_y+y,rand_x:rand_x+x],img,casting="unsafe",where=mask> 100)
+
+    #Place the card at the random posion in the mask. This is a black image with the card placed at the random position
+    forground=np.zeros_like(_dst, dtype='uint8')
+    np.copyto(forground[rand_y:rand_y+y,rand_x:rand_x+x],img,casting="unsafe", where=mask> 100)
+    
+    # Convert uint8 to float
+    forground = forground.astype(float)
+    _dst = _dst.astype(float)
+    
+    # Normalize the alpha mask to keep intensity between 0 and 1
+    alpha = alpha.astype(float)/255
+    
+    # Multiply the foreground with the alpha matte. This makes the forground image a little bit darker. Now the card will not be to light in the final image
+    forground = cv2.multiply(alpha-transparency, forground)
+    
+    
+    # The mask (alpha) is inverted. Now we have the background image with a black spot where the card is.
+    # Because we want the card to be transparent, we add a scalar transparency. This results in the black area no longer being completely black.
+    # Because of the transparency factor, we can see the background in the black spot a little bit.
+    # The factor calculated is normalised to 1 so the final image is not too bright
+    _dst = cv2.multiply((1-alpha+transparency)/(1+transparency), _dst)
+    
+    # Add the masked foreground and background are added.
+    # Because the forgound image is a little bit less bright and the background is a little bit visible at the black spot, we now have a transparent card
+    outImage = cv2.add(forground, _dst)
+    
+    # Display image
+    """
+    cv2.imshow("forground", forground/255)
+    cv2.imshow("_dst", _dst/255)
+    cv2.imshow("outImg", outImage/255)
+    cv2.waitKey(0)
+    """
 
     #debugcv2.imshow('replace', _dst)
     #debug cv2.waitKey(1000)
-    return _dst,(rand_x,rand_y)
+    return outImage/255,(rand_x,rand_y)
 
 def scale_imput_img():
     """read all 'jpg' from the folder 'backgrounds' and save the back to the older as grascale with size 800*514
@@ -266,146 +308,16 @@ def img_blure(img, kernel_size=3):
 
 # testcode for funktios
 if __name__ == "__main__":
-    seed = (1,2)
-    random.seed(seed)
+    path_cards = '0_cards_images'
+    path_background = '0_background_images'
 
-    sys.path.append('D:/FHGR/05_HS_22/BiV_02/00_Projekt/Biv2')
-    sys.path.append('E:\FHGR\Biv2')
-
-    #%matplotlib inline
-
-    #%% import images and cvs
-
-    path = 'Cards'
-
-    card_list_dtype = (int,str,str,ord,int)
-
-    images = [cv2.imread(file,0) for file in glob.glob(path+"/*.png")]
-    images = np.array(images)
-
-    back = [cv2.imread(file,0) for file in glob.glob("background/*.jpg")]
-    back_images = np.array(back)
-
-    #%% remove black blank
-    print(images.shape)
-    ##images = images[1:]
-    print(images.shape)
-    #%% 
-    card_list = np.loadtxt('card_list.csv',delimiter=";", dtype=str)[1:]
-    for col in range(card_list.shape[1]):
-        print(card_list_dtype[col])
-
-    #%%zoom test
-
-
-    img = images[1]
-    rows, cols= img.shape
-
-
-    for sc in range(1,10):
-        print(sc)   
-        pts1 = np.float32([[0, 0],
-                        [cols,rows], 
-                        [0,rows ]])
-        pts2 = np.float32([[0, 0],
-                        [cols/sc, rows/sc], 
-                        [0,rows/sc ]])
-        M = cv2.getAffineTransform(pts1, pts2)
-        cv2.imshow("test",cv2.warpAffine(img, M, (cols ,rows)))
-        cv2.imshow("test 2 ",cv2.resize(img, [cols,rows], 0.5, 0.5))
-        cv2.waitKey(500)
-
-    cv2.destroyAllWindows()
-
-    #%% test trans
-    img = images[1]
-    rows, cols= img.shape
-
-    sc = np.sqrt(2) #scale 
-    
-    pts1 = np.float32([[0, 0],
-                    [cols,rows], 
-                    [0,rows ]])
-
-    x = 20
-    y = 50
-    pts2 = np.float32([[x, y], #pos
-                    [x + cols/sc, y+rows/sc], #sclae
-                    [x,y+rows/sc ]]) #trans
-    
-    M = cv2.getAffineTransform(pts1, pts2)
-    cv2.imshow("test",cv2.warpAffine(img, M, (cols ,rows)))
-
-    # saninty check if img is in frame
-    if cv2.calcHist([img], [0], None, [256], [0, 256])[240:].sum():
-        print("not correctly implementeds use scal and so on")
-    cv2.waitKey(5000)
-
-    cv2.destroyAllWindows()
-
-    #%% test 3d rot
-
-    cv2.imshow("test",img)
-    cv2.waitKey(0)
-    for i in range(100):
-        random.seed(i)
-        img = images[1]
-        rows, cols= img.shape
-        sc = 4
-        rand_x = random.sample(range(int(cols/sc)),4)
-        rand_y = random.sample(range(int(rows/sc)),4)
-
-        #rand_x = rand_y = [50,50,50,50]
-
-        pts1 = np.float32([ [0, 0], 
-                            [0,rows ],
-                            [cols,rows],
-                            [cols,0 ]])
-
-        pts2 = np.float32([[rand_x[0]       , rand_y[0]],
-                            [rand_x[1]      ,rows-rand_y[1]],
-                            [cols-rand_x[2] ,rows-rand_y[2]], 
-                            [cols-rand_x[3] ,rand_y[3]]])
-        pts3 = np.float32([
-        [ 44. ,  0.],
-        [376., 180.],
-        [ 32., 209.],
-        [379. , 70.]])                   
-        #print (pts2)
-        M = cv2.getPerspectiveTransform(pts1,pts2)
-        cv2.imshow("test",cv2.warpPerspective(img, M, (cols ,rows)))
-        cv2.waitKey(50)
-
-    cv2.destroyAllWindows()
-
-    #%%
-    for img in images:
-        #cv2.rectangle(img,[10,10],[247,390],255,-1)
-        cv2.imshow("test",img)
+    card=cv2.imread(glob.glob(path_cards+"/*.png")[0])
+    background=cv2.imread(glob.glob(path_background+"/*.jpg")[0])
+    card[card==0]=1
+    while True:
+        res=img_pos_rand(img_rot_rand(card), background)
+        cv2.imshow("test", res[0])
         cv2.waitKey(0)
-
-    cv2.waitKey(1000)
     cv2.destroyAllWindows()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cv2.destroyAllWindows()
 
 

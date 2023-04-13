@@ -33,19 +33,20 @@ for root, dir, files in os.walk(all_images):
             random_number = random.random()
             print(path_train+items)
             print(path_train+items[0:-4]+".txt")
-            if random_number > 0 and random_number < 0.6:
+            if random_number > 0 and random_number < 0.7:
                 shutil.move(all_images+items, path_train+items)
                 shutil.move(all_images+items[0:-4]+".txt", path_train+items[0:-4]+".txt")
                 nr_train+=1
+
+            elif random_number > 0.7 and random_number < 1:
+                shutil.move(all_images+items, path_validation+items)
+                shutil.move(all_images+items[0:-4]+".txt", path_validation+items[0:-4]+".txt")
+                nr_validation+=1
+                
             elif random_number > 0.6 and random_number < 0.8:
                 shutil.move(all_images+items, path_test+items)
                 shutil.move(all_images+items[0:-4]+".txt", path_test+items[0:-4]+".txt")
                 nr_test+=1
-            elif random_number > 0.8 and random_number < 1:
-                shutil.move(all_images+items, path_validation+items)
-                shutil.move(all_images+items[0:-4]+".txt", path_validation+items[0:-4]+".txt")
-                nr_validation+=1
-            
 print("Nr of train images: ", nr_train)
 print("Nr of test images: ", nr_test)
 print("Nr of validation images: ", nr_validation)
