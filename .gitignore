@@ -1,5 +1,4 @@
-1_all_images/*.png
-1_all_images/*.txt
+1_all_images/*
 library/venv-cardDetection/*
 library/venv-cardDetection_cuda/*
 library/venv-cardPredection/*
@@ -9,3 +8,4 @@ yolov*n.pt
 runs
 *.csv
 *.pyc
+*.yaml

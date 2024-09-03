@@ -1,0 +1,10 @@
+PATH_ALL_IMAGES = '1_all_images/'
+CSV_NAME = PATH_ALL_IMAGES + 'all_labels.csv'
+PATH_CARDS = '0_cards_images'
+PATH_BACKGROUND = '0_background_images'
+
+SPLIT_PATH = '2_splited_data/'
+PATH_TRAIN = SPLIT_PATH + 'train/'
+PATH_TEST = SPLIT_PATH + 'test/'
+PATH_VALIDATION = SPLIT_PATH + 'validation/'
+DATASET_NAME = 'dataset.yaml'

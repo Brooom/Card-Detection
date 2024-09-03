@@ -25,7 +25,7 @@ if __name__ == '__main__':
     model = YOLO('yolov10n.pt')  # Load pretrained model
 
     # Train the model
-    model.train(data="dataset.yaml", epochs=50, batch=16, imgsz=640, pretrained=True, single_cls=False, patience=5, dropout=0.1, verbose=True, device=0, save_period=2)
+    model.train(data="dataset.yaml", epochs=40, batch=32, imgsz=640, pretrained=True, single_cls=False, patience=5, dropout=0.1, verbose=True, device=0, save_period=2)
 
     # Validate the model
     metrics = model.val()  # no arguments needed, dataset and settings remembered

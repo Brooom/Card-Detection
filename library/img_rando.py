@@ -50,9 +50,9 @@ def img_zoom_rand(img,seed=None, minZoom=1/4, maxZoom=1):
     elif seed != None:
         random.seed(seed)
         #debug print(3)
-    
+
     sc = random.uniform(minZoom, maxZoom)
-    print("Zoomfactor: "+ str(sc))
+    # print("Zoomfactor: "+ str(sc))
     #debug cv2.imshow("debug_zoom",cv2.resize(img, (0, 0), fx=sc, fy=sc))
     return cv2.resize(img, (0, 0), fx=sc, fy=sc)
 
@@ -69,7 +69,6 @@ def img_rot_rand(img,seed=None):
         a seed for the ramdeom generater,
         if None and fix seed is has a vale (not None)
         fix_seed is used, by default None
-
 
     Returns
     -------
@@ -185,15 +184,14 @@ def img_pos_rand(img,dst,mask=None,seed=None):
     elif seed != None:
         random.seed(int(seed))
         #debug print("seed")
-    
+
     _dst = np.copy(dst)
-    
+
     if mask is None:
         #Create mask
         ret, mask = cv2.threshold(img, 0, 255, 0, cv2.THRESH_BINARY)
         kernel = np.ones((5, 5), np.uint8)
         mask = cv2.erode(mask, kernel, iterations=1) 
-    
 
     #Generate random pos
     y, x, c= img.shape
@@ -213,28 +211,27 @@ def img_pos_rand(img,dst,mask=None,seed=None):
     #Place the card at the random posion in the mask. This is a black image with the card placed at the random position
     forground=np.zeros_like(_dst, dtype='uint8')
     np.copyto(forground[rand_y:rand_y+y,rand_x:rand_x+x],img,casting="unsafe", where=mask> 100)
-    
+
     # Convert uint8 to float
     forground = forground.astype(float)
     _dst = _dst.astype(float)
-    
+
     # Normalize the alpha mask to keep intensity between 0 and 1
     alpha = alpha.astype(float)/255
-    
+
     # Multiply the foreground with the alpha matte. This makes the forground image a little bit darker. Now the card will not be to light in the final image
     forground = cv2.multiply(alpha-transparency, forground)
-    
-    
+
     # The mask (alpha) is inverted. Now we have the background image with a black spot where the card is.
     # Because we want the card to be transparent, we add a scalar transparency. This results in the black area no longer being completely black.
     # Because of the transparency factor, we can see the background in the black spot a little bit.
     # The factor calculated is normalised to 1 so the final image is not too bright
     _dst = cv2.multiply((1-alpha+transparency)/(1+transparency), _dst)
-    
+
     # Add the masked foreground and background are added.
     # Because the forgound image is a little bit less bright and the background is a little bit visible at the black spot, we now have a transparent card
     outImage = cv2.add(forground, _dst)
-    
+
     # Display image
     """
     cv2.imshow("forground", forground/255)
@@ -261,15 +258,8 @@ def scale_imput_img():
         sc = 2
         cv2.imwrite(file, cv2.resize(img, (400*sc, 257*sc)))
 
-
     return 0
 
-
-
-
-
-
-#%%
 def img_kill (img,delay = 5000 ):
     """desplay a 'img' with open cv in its one window and close it afert 'delay' or a pressed key
 
@@ -298,13 +288,13 @@ def img_blure(img, kernel_size=3):
     """
     # Creating the kernel(2d convolution matrix)
     kernel1 = np.ones((kernel_size, kernel_size), np.float32)*1/(kernel_size*kernel_size)
-    
+
     # Applying the filter2D() function
     blured_img = cv2.filter2D(src=img, ddepth=-1, kernel=kernel1)
     return blured_img
 
 
-# testcode for funktios
+# testcode for functinos
 if __name__ == "__main__":
     path_cards = '0_cards_images'
     path_background = '0_background_images'
@@ -317,5 +307,3 @@ if __name__ == "__main__":
         cv2.imshow("test", res[0])
         cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-

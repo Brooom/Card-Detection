@@ -12,7 +12,10 @@ def getLastModelPath():
     print(f"Last train folder: {model_path}")
     return model_path
 
+
+# Load the model
 model_path = getLastModelPath()
+print(f"Model path: {model_path}")
 model = YOLO(f"{model_path}best.pt")
 
 # Predict on video
