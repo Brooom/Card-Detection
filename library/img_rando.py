@@ -1,11 +1,9 @@
 # Tutorial by https://medium.com/swlh/image-classification-for-playing-cards-26d660f3149e
-#%%
-import numpy as np
-import cv2  
-import sys
 import glob
 import random
 import math
+import numpy as np
+import cv2
 
 fix_seed = None
 
