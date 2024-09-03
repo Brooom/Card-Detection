@@ -15,6 +15,11 @@ def getLastModelPath():
 model_path = getLastModelPath()
 model = YOLO(f"{model_path}best.pt")
 
+# Predict on video
+model.predict("test_video.mp4", save=True)
+
+exit()
+
 #Predict cam
 cap = cv2.VideoCapture(0)
 while True:

@@ -42,12 +42,12 @@ for root, dir, files in os.walk(all_images):
             random_number = random.random()
             print(path_train+items)
             print(path_train+items[0:-4]+".txt")
-            if 0 < random_number < 0.7:
+            if 0 < random_number < 0.6:
                 shutil.move(all_images+items, path_train+items)
                 shutil.move(all_images+items[0:-4]+".txt", path_train+items[0:-4]+".txt")
                 nr_train += 1
 
-            elif 0.7 < random_number < 0.85:
+            elif random_number < 0.8:
                 shutil.move(all_images+items, path_validation+items)
                 shutil.move(all_images+items[0:-4]+".txt", path_validation+items[0:-4]+".txt")
                 nr_validation += 1
