@@ -2,59 +2,56 @@ import os
 import fnmatch
 import shutil
 import random
+from library.config import PATH_ALL_IMAGES, PATH_TRAIN, PATH_TEST, PATH_VALIDATION
 
-all_images = '1_all_images/'
-path_train = '2_splited_data/train/'
-path_test = '2_splited_data/test/'
-path_validation = '2_splited_data/validation/'
 image_datatypes = ['jpg', 'png', 'jpeg', 'bmp']
-nr_train= 0
-nr_test= 0
-nr_validation= 0
+nr_train = 0
+nr_test = 0
+nr_validation = 0
 
 # Check if the train folder exists
-if not os.path.exists(path_train):
-    os.makedirs(path_train)
+if not os.path.exists(PATH_TRAIN):
+    os.makedirs(PATH_TRAIN)
 
-for root, dir, files in os.walk(path_train):
+for root, dir, files in os.walk(PATH_TRAIN):
     if files != []:
         raise Exception("Train folder is not empty.")
 
 # Check if the test folder exists
-if not os.path.exists(path_test):
-    os.makedirs(path_test)
+if not os.path.exists(PATH_TEST):
+    os.makedirs(PATH_TEST)
 
-for root, dir, files in os.walk(path_test):
+for root, dir, files in os.walk(PATH_TEST):
     if files != []:
         raise Exception("Test folder is not empty.")
 
 # Check if the validation folder exists
-if not os.path.exists(path_validation):
-    os.makedirs(path_validation)
+if not os.path.exists(PATH_VALIDATION):
+    os.makedirs(PATH_VALIDATION)
 
-for root, dir, files in os.walk(path_validation):
+for root, dir, files in os.walk(PATH_VALIDATION):
     if files != []:
         raise Exception("Validation folder is not empty.")
 
-for root, dir, files in os.walk(all_images):
+for root, dir, files in os.walk(PATH_ALL_IMAGES):
     for items in fnmatch.filter(files, "*"):
         if items[-3:len(items)] in image_datatypes:
             random_number = random.random()
-            print(path_train+items)
-            print(path_train+items[0:-4]+".txt")
+            print(PATH_TRAIN+items)
+            print(PATH_TRAIN+items[0:-4]+".txt")
             if 0 < random_number < 0.6:
-                shutil.move(all_images+items, path_train+items)
-                shutil.move(all_images+items[0:-4]+".txt", path_train+items[0:-4]+".txt")
+                shutil.move(PATH_ALL_IMAGES+items, PATH_TRAIN+items)
+                shutil.move(PATH_ALL_IMAGES+items[0:-4]+".txt", PATH_TRAIN+items[0:-4]+".txt")
                 nr_train += 1
 
             elif random_number < 0.8:
-                shutil.move(all_images+items, path_validation+items)
-                shutil.move(all_images+items[0:-4]+".txt", path_validation+items[0:-4]+".txt")
+                shutil.move(PATH_ALL_IMAGES+items, PATH_VALIDATION+items)
+                shutil.move(PATH_ALL_IMAGES+items[0:-4]+".txt", PATH_VALIDATION+items[0:-4]+".txt")
                 nr_validation += 1
 
             else:
-                shutil.move(all_images+items, path_test+items)
-                shutil.move(all_images+items[0:-4]+".txt", path_test+items[0:-4]+".txt")
+                shutil.move(PATH_ALL_IMAGES+items, PATH_TEST+items)
+                shutil.move(PATH_ALL_IMAGES+items[0:-4]+".txt", PATH_TEST+items[0:-4]+".txt")
                 nr_test += 1
 
 print(f"Number of train images: {nr_train}")
